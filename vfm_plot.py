@@ -10,11 +10,12 @@ def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
     if len(imgSize) != 2:
         sys.error('imgSize is not of a usable size. Must be of length 2, it is ' + np.shape(imgSize));
 
-    axpos = [0.062, 0.121, 0.837, 0.788];
+    axpos = np.array([0.062, 0.121, 0.837, 0.788])
 
     # Create Figure & set size
-    plt.figure(num=1, figsize=np.float64(imgSize)/dpi, dpi=dpi, clear=True);
-    plt.gca().set_position(pos=axpos)
+    fig = plt.figure(num=1, figsize=np.float64(imgSize)/dpi, dpi=dpi, clear=True)
+    ax0 = fig.add_subplot(111)
+    ax0.set_position(pos=axpos)
 
     ##[r,g,b]=CreateColorMap(vfm.FieldDescription);
     
@@ -36,32 +37,48 @@ def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
     # axis labels
     fd = {'fontsize': 12, 'fontweight': 'bold', 'fontfamily': 'verdana'}
     plt.ylabel('Altitude (km)', fontdict=fd)
-    plt.xlabel('Lat', fontdict=fd)
-    plt.gca().xaxis.set_label_coords(-0.045, -0.03)
 
-    # axis ticks
+    # axis ticks (latitude)
     dx = (max(xs[0])-min(xs[0]))/8.
     ticks = np.arange(min(xs[0]), max(xs[0]) + dx, dx)
-    plt.gca().xaxis.set_ticks(ticks)
-    plt.gca().xaxis.set_major_formatter('{x:5.2f}')
+    ax0.xaxis.set_ticks(ticks)
+    ax0.xaxis.set_major_formatter('{x:5.2f}')
+    ax0.set_xlabel('Lat', fontdict=fd)
+    ax0.xaxis.set_label_coords(-0.045, -0.03)
 
-    #dx = (max(xs[1])-min(xs[1]))/8.
-    #ticks = np.arange(min(xs[1]), max(xs[1]) + dx, dx)
+    plt.xticks(fontsize=12)#,fontweight='bold')
+    plt.yticks(fontsize=12)#,fontweight='bold')
+    #ax0.xaxis.set_minor_locator(mtk.AutoMinorLocator(4))
+    ax0.yaxis.set_minor_locator(mtk.AutoMinorLocator(5))
+    ax0.yaxis.set_ticks_position('both')
+    ax0.tick_params(which='major',length=8)
+    ax0.tick_params(which='minor',length=5)
+    
+    # axis ticks (longitude)
+    # we need to create a new axis
+    ax1 = ax0.twiny()
+    ax1.set_position(pos=axpos - [0, 0.1, 0, 0])
+    ax1.xaxis.set_ticks_position("bottom")
+    ax1.xaxis.set_label_position("bottom")
+    ax1.spines["bottom"].set_position(("axes", -0.062))
+    ax1.set_frame_on(False)
 
-    plt.xticks(fontsize=12,fontweight='bold')
-    plt.yticks(fontsize=12,fontweight='bold')
-    #plt.gca().xaxis.set_minor_locator(mtk.AutoMinorLocator(4))
-    plt.gca().yaxis.set_minor_locator(mtk.AutoMinorLocator(5))
-    plt.gca().yaxis.set_ticks_position('both')
-    plt.gca().tick_params(which='major',length=8)
-    plt.gca().tick_params(which='minor',length=5)
+    dx = (max(xs[1])-min(xs[1]))/8.
+    ticks = np.arange(min(xs[1]), max(xs[1]) + dx, dx)
+    ax1.xaxis.set_ticks(ticks)
+    ax1.xaxis.set_major_formatter('{x:5.2f}')
+    ax1.set_xlabel('Lon', fontdict=fd)
+    ax1.xaxis.set_label_coords(-0.045, -0.068)
+    ax1.set_xlim([xs[1][0], xs[1][-1]])
+    ax1.tick_params(which='both',length=0)
+    plt.xticks(fontsize=12)#,fontweight='bold')
     
     # colorbar 
     cb = plt.colorbar()
     cb.ax.tick_params(length=0)
 
     # fixes axes positions after ploting the colorbar
-    plt.gca().set_position(pos=axpos)
+    ax0.set_position(pos=axpos)
     cb.ax.set_position(pos=[0.919, 0.121, 0.021, 0.788])
 
     # Create bottom caption for flag's values
@@ -70,25 +87,25 @@ def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
         typelabel += '%d - %s    '%(vfm['Vmin']+i, txt)
     
     #th = annotation('textbox',[0.062 0.0 0.837 0.04],'string',typelabel);
-    plt.gcf().text(0.06, 0.01, typelabel, fontsize=12, fontweight='bold', fontfamily='verdana')
+    fig.text(0.5, 0.015, typelabel, fontsize=12, fontweight='bold', fontfamily='verdana',
+             ha='center', va='center')
     #set(th,...
     #    'HorizontalAlignment','Center',...
     #    'VerticalAlignment','Middle');
     #
-    ## Display warning messages when image is larger than figure window (in pixels)
-    ## this is to let you know that you're trying to display more information than what
-    ## is there and that small/thin feature may be missing. If you use the zoom tool that
-    ## data will be visible.
-    #Isize = get(fig,'Position');
-    #if  (Isize(3) < size(vfm.Data,2)) && (Isize(4) < size(vfm.Data,1)):
-    #    disp('Warning: Image is bigger than the current figure widow'); 
-    #    disp('         not all pixels may be visible'); 
-    #elif  (Isize(3) < size(vfm.Data,2)):
-    #    disp('Warning: Image is wider than the current figure widow'); 
-    #    disp('         not all pixels may be visible'); 
-    #elif Isize(4) < size(vfm.Data,1):
-    #    disp('Warning: Image is taller than the current figure widow'); 
-    #    disp('         not all pixels may be visible'); 
+    # Display warning messages when image is larger than figure window (in pixels)
+    # this is to let you know that you're trying to display more information than what
+    # is there and that small/thin feature may be missing. If you use the zoom tool that
+    # data will be visible.
+    if  (imgSize[0] < vfm['Data'].shape[1]) & (imgSize[1] < vfm['Data'].shape[0]):
+        print('Warning: Image is bigger than the current figure widow')
+        print('         not all pixels may be visible')
+    elif  (imgSize[0] < vfm['Data'].shape[1]):
+        print('Warning: Image is wider than the current figure widow')
+        print('         not all pixels may be visible')
+    elif (imgSize[1] < vfm['Data'].shape[0]):
+        print('Warning: Image is taller than the current figure widow')
+        print('         not all pixels may be visible')
 
     return(0)
 #[fig, ax, cb, th]
