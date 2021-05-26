@@ -48,9 +48,6 @@ vfmblock = vfm_expand.vfm_expand(data)
 print(f'Size of VFM block: {np.shape(vfmblock)}')
 [nz, nt] = np.shape(vfmblock)
 
-# extract the first feature flag (Feature Type)
-vfmflag = vfm_type.vfm_type(vfmblock, 'type')
-
 # read latitude
 # Not all data files have the ssLatitude variable
 # This is the latitude at the level 1 data (i.e. 333m)
@@ -84,8 +81,15 @@ for i,tag in enumerate(field_names):
     
 alt = alt[ (alt > -0.5) & (alt < 30) ]
 
-# plot the flag
-vfm_plot.vfm_plot(vfmflag, [lat, lon], alt)
+vfmtypes = ['type', 'typeqa', 'phase', 'phaseqa', 'aerosol', 'cloud',
+            'psc', 'subtype', 'subtypeqa', 'averaging']
+
+for tag in vfmtypes:
+    # extract the feature flag
+    vfmflag = vfm_type.vfm_type(vfmblock, tag)
+
+    # plot the flag
+    vfm_plot.vfm_plot(vfmflag, [lat, lon], alt)
 
 #vs_meta.detach()
 #vs.end()

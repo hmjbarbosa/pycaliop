@@ -5,6 +5,9 @@ def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
     import matplotlib.pyplot as plt
     import numpy as np
     import sys
+    import imp
+    import CreateColorMap
+    imp.reload(CreateColorMap)
 
     # Determine or set image size
     if len(imgSize) != 2:
@@ -13,17 +16,27 @@ def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
     axpos = np.array([0.062, 0.121, 0.837, 0.788])
 
     # Create Figure & set size
-    fig = plt.figure(num=1, figsize=np.float64(imgSize)/dpi, dpi=dpi, clear=True)
+    #fig = plt.figure(num=1, figsize=np.float64(imgSize)/dpi, dpi=dpi, clear=True)
+    fig = plt.figure(figsize=np.float64(imgSize)/dpi, dpi=dpi, clear=True)
     ax0 = fig.add_subplot(111)
     ax0.set_position(pos=axpos)
 
-    ##[r,g,b]=CreateColorMap(vfm.FieldDescription);
+    cmap = CreateColorMap.CreateColorMap(vfm['FieldDescription'])
+    #cmap = CreateColorMap.CreateColorMap('Feature Type QA')
+    #cmap = CreateColorMap.CreateColorMap('Ice/Water Phase')
+    #cmap = CreateColorMap.CreateColorMap('Ice/Water Phase QA')
+    #cmap = CreateColorMap.CreateColorMap('Aerosol Sub-Type')
+    #cmap = CreateColorMap.CreateColorMap('Cloud Sub-Type')
+    #cmap = CreateColorMap.CreateColorMap('PSC Sub-Type')
+    #cmap = CreateColorMap.CreateColorMap('Sub-Type')
+    #cmap = CreateColorMap.CreateColorMap('Sub-Type QA')
+    #cmap = CreateColorMap.CreateColorMap('Averaging Required for Detection')
     
-    red = np.array([255,   0,   0, 255, 250,   0, 192,   0])/255
-    grn = np.array([255,  38, 220, 160, 255, 255, 192,   0])/255 
-    blu = np.array([255, 255, 255,   0,   0, 110, 192,   0])/255 
-    cmap = mpl.colors.ListedColormap(np.array([red, grn, blu]).transpose())
-
+    #red = np.array([255,   0,   0, 255, 250,   0, 192,   0])/255
+    #grn = np.array([255,  38, 220, 160, 255, 255, 192,   0])/255 
+    #blu = np.array([255, 255, 255,   0,   0, 110, 192,   0])/255 
+    #cmap = mpl.colors.ListedColormap(np.array([red, grn, blu]).transpose())
+    
     ## We should set the y-axis limits of the colorbar. Because we are
     ## plotting integer numbers, and we want them centered with the colors in
     ## the colorbar, the range has to be +-0.5 wider than the actual range
