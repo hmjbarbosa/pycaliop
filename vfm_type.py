@@ -37,6 +37,7 @@ def vfm_type(vfm_row, feature):
     """
 
     import numpy as np
+    import sys
     
     umask3 = np.uint16(7)
     umask2 = np.uint16(3)
@@ -44,7 +45,7 @@ def vfm_type(vfm_row, feature):
 
     feature = feature.lower()
     
-    if feature in ('type'):
+    if feature.lower() == 'type':
         # bits 1-3 Feature Type 
         # 0 = invalid (bad or missing data)
         # 1 = "clear air"
@@ -61,7 +62,7 @@ def vfm_type(vfm_row, feature):
                      'ByteTxt':['Invalid','Clear Air','Cloud','Aerosol','Strat Feature',
                                 'Surface','Subsurface','No Signal']}
         
-    elif feature in ('typeqa'):
+    elif feature.lower() == 'typeqa':
         # bits 4-5 Feature Type QA 
         # 0 = none
         # 1 = low
@@ -77,7 +78,7 @@ def vfm_type(vfm_row, feature):
                      'Vmin':0, 'Vmax':3,
                      'ByteTxt':['Clear Air','No','Low','Medium','High']}
         
-    elif feature in ('phase'):
+    elif feature.lower() == 'phase':
         # 6-7 Ice/Water Phase
         # 0 = unknown / not determined
         # 1 = randomly oriented ice
@@ -90,7 +91,7 @@ def vfm_type(vfm_row, feature):
                      'Vmin':0, 'Vmax':3,
                      'ByteTxt':['Unknown/Not Determined','Ice','Water','HO']}
     
-    elif feature in ('phaseqa'):
+    elif feature.lower() == 'phaseqa':
         # 8-9 Ice/Water Phase QA 
         # 0 = none
         # 1 = low
@@ -103,7 +104,7 @@ def vfm_type(vfm_row, feature):
                      'Vmin':0, 'Vmax':3,
                      'ByteTxt':['None','Low','Medium','High']}
     
-    elif feature in ('aerosol'):
+    elif feature.lower() == 'aerosol':
         # 10-12 Feature Sub-type
         # If feature type = aerosol, bits 10-12 will specify the aerosol type
         # 0 = not determined
@@ -126,7 +127,7 @@ def vfm_type(vfm_row, feature):
                      'ByteTxt':['Not Determined','Clean Marine','Dust','Polluted Cont.','Clean Cont.',
                                 'Polluted Dust','Smoke','Other']}
     
-    elif feature in ('cloud'):
+    elif feature.lower() == 'cloud':
         # 10-12 Feature Sub-type
         # If feature type = cloud, bits 10-12 will specify the cloud type.
         # 0 = low overcast, transparent
@@ -149,7 +150,7 @@ def vfm_type(vfm_row, feature):
                      'ByteTxt':['NA','Low, overcast, thin','Low, overcast, thick','Trans. StratoCu','Low Broken',
                                 'Altocumulus','Altostratus','Cirrus (transparent)','Deep Convection']}
     
-    elif feature in ('psc'):
+    elif feature.lower() == 'psc':
         # 10-12 Feature Sub-type
         # If feature type = Polar Stratospheric Cloud, bits 10-12 will specify PSC classification.
         # 0 = not determined
@@ -172,7 +173,7 @@ def vfm_type(vfm_row, feature):
                      'ByteTxt':['Not Determined','Non-Depol. PSC','Depol. PSC',
                                 'Non-Depol Aerosol','Depol. Aerosol','spare','spare','Other']}
         
-    elif feature in ('subtype'):
+    elif feature.lower() == 'subtype':
         # Returns just subtype number
         a = np.right_shift(vfm_row,-9)
         vfm_flag = np.bitwise_and(umask3,a)
@@ -182,7 +183,7 @@ def vfm_type(vfm_row, feature):
                      'ByteTxt':['Zero','One','Two','Three','Four','Five',
                                 'Six','Seven']}
         
-    elif feature in ('subtypeqa'):
+    elif feature.lower() == 'subtypeqa':
         # 13 Cloud / Aerosol /PSC Type QA 
         # 0 = not confident
         # 1 = confident
@@ -193,7 +194,7 @@ def vfm_type(vfm_row, feature):
                      'Vmin':0, 'Vmax':1,
                      'ByteTxt':['Not Confident','Confident']}
         
-    elif feature in ('averaging'):
+    elif feature.lower() == 'averaging':
         # 14-16 Horizontal averaging required for detection
         # (provides a coarse measure of feature backscatter intensity)
         # 0 = not applicable
@@ -210,7 +211,7 @@ def vfm_type(vfm_row, feature):
                      'ByteTxt':['NA','1/3 km','1 km','5 km','20 km','80 km']}
         
     else:
-        disp('Unknown type specifier. Check input')
+        sys.exit('Unknown type specifier. Check input')
         vfm_flag = np.nan
         vfm_class = {'Data':np.nan,
                      'FieldDescription':'empty',
