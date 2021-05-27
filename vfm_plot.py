@@ -1,23 +1,25 @@
 def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
-    """
-    VFM_PLOT   Plots a VFM feature
-        VFM_PLOT(vfm, xs, y) plots the feature inside the vfm 
-        structure. xs is a two column array with values for the x-axis, typically
-        lat and lon, and y is one column array with values for the y-axis, typically
-        the altitude. 
+    """VFM_PLOT   Plots a VFM feature
+
+        VFM_PLOT(vfm, xs, y) plots the feature inside the vfm
+        structure. xs is a two column array with values for the
+        x-axis, typically lat and lon, and y is one column array with
+        values for the y-axis, typically the altitude.
         
-        vfm_class is a structure that contains information about the vfm flag
-        returned, and contains the following fields:
+        vfm_class is a structure that contains information about the
+        vfm flag returned, and contains the following fields:
         
            'Data', the feature flag data (int16)
            'FieldDescription', the feature flag name 
            'Vmin' and 'Vmax', the limits of the feature flag
            'ByteTxt', descriptors of the feature flag
 
-        VFM_PLOT(vfm, xs, y, imgSize, dpi) allow passing optional argument to 
-        change the default image size (1300 by 667) and resolution (96 dpi). 
+        VFM_PLOT(..., imgSize=[1300,667], dpi=96) allow passing
+        optional argument to change the default image size and
+        resolution.
                 
-        The function returns handlers for: figure, axis, colorbar and text legend. 
+        The function returns handlers for: figure, axis, colorbar and
+        text legend.
 
         History: 
            2021-may-24 Translated from Matlab to Python
@@ -28,7 +30,7 @@ def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
            
            2005-mar-28 Original code by Ralph Kuehn shared on CALIPO's
                        website, from 2005/03/28.
-        
+
     """
 
     import matplotlib as mpl

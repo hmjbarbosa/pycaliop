@@ -19,9 +19,11 @@ import imp
 import vfm_type
 import vfm_expand
 import vfm_plot
+import map_plot
 imp.reload(vfm_type)
 imp.reload(vfm_expand)
 imp.reload(vfm_plot)
+imp.reload(map_plot)
 
 plt.ion()
 plt.interactive(True)
@@ -92,6 +94,8 @@ for tag in ('subtypeqa',):
     # plot the flag
     out = vfm_plot.vfm_plot(vfmflag, [lat, lon], alt)
 
+map_plot.map_plot(lat, lon, world=0.15)
+    
 #vs_meta.detach()
 #vs.end()
 #h4.close()
