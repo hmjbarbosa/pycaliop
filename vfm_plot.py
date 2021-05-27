@@ -1,4 +1,35 @@
 def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
+    """
+    VFM_PLOT   Plots a VFM feature
+        VFM_PLOT(vfm, xs, y) plots the feature inside the vfm 
+        structure. xs is a two column array with values for the x-axis, typically
+        lat and lon, and y is one column array with values for the y-axis, typically
+        the altitude. 
+        
+        vfm_class is a structure that contains information about the vfm flag
+        returned, and contains the following fields:
+        
+           'Data', the feature flag data (int16)
+           'FieldDescription', the feature flag name 
+           'Vmin' and 'Vmax', the limits of the feature flag
+           'ByteTxt', descriptors of the feature flag
+
+        VFM_PLOT(vfm, xs, y, imgSize, dpi) allow passing optional argument to 
+        change the default image size (1300 by 667) and resolution (96 dpi). 
+                
+        The function returns handlers for: figure, axis, colorbar and text legend. 
+
+        History: 
+           2021-may-24 Translated from Matlab to Python
+
+           2021-mar-27 Opmization for layout on multiple Matlab version.
+        
+           2021-mar-20 Makes use of metadata in vfm dictionary
+           
+           2005-mar-28 Original code by Ralph Kuehn shared on CALIPO's
+                       website, from 2005/03/28.
+        
+    """
 
     import matplotlib as mpl
     import matplotlib.ticker as mtk
@@ -22,20 +53,6 @@ def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
     ax0.set_position(pos=axpos)
 
     cmap = CreateColorMap.CreateColorMap(vfm['FieldDescription'])
-    #cmap = CreateColorMap.CreateColorMap('Feature Type QA')
-    #cmap = CreateColorMap.CreateColorMap('Ice/Water Phase')
-    #cmap = CreateColorMap.CreateColorMap('Ice/Water Phase QA')
-    #cmap = CreateColorMap.CreateColorMap('Aerosol Sub-Type')
-    #cmap = CreateColorMap.CreateColorMap('Cloud Sub-Type')
-    #cmap = CreateColorMap.CreateColorMap('PSC Sub-Type')
-    #cmap = CreateColorMap.CreateColorMap('Sub-Type')
-    #cmap = CreateColorMap.CreateColorMap('Sub-Type QA')
-    #cmap = CreateColorMap.CreateColorMap('Averaging Required for Detection')
-    
-    #red = np.array([255,   0,   0, 255, 250,   0, 192,   0])/255
-    #grn = np.array([255,  38, 220, 160, 255, 255, 192,   0])/255 
-    #blu = np.array([255, 255, 255,   0,   0, 110, 192,   0])/255 
-    #cmap = mpl.colors.ListedColormap(np.array([red, grn, blu]).transpose())
     
     ## We should set the y-axis limits of the colorbar. Because we are
     ## plotting integer numbers, and we want them centered with the colors in
@@ -102,12 +119,9 @@ def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
         typelabel += '%d = %s    '%(vfm['Vmin']+i, txt)
     
     #th = annotation('textbox',[0.062 0.0 0.837 0.04],'string',typelabel);
-    fig.text(0.5, 0.015, typelabel, fontsize=12, fontweight='bold', fontfamily='verdana',
+    th = fig.text(0.5, 0.015, typelabel, fontsize=12, fontweight='bold', fontfamily='verdana',
              ha='center', va='center')
-    #set(th,...
-    #    'HorizontalAlignment','Center',...
-    #    'VerticalAlignment','Middle');
-    #
+
     # Display warning messages when image is larger than figure window (in pixels)
     # this is to let you know that you're trying to display more information than what
     # is there and that small/thin feature may be missing. If you use the zoom tool that
@@ -122,5 +136,5 @@ def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
         print('Warning: Image is taller than the current figure widow')
         print('         not all pixels may be visible')
 
-    return(0)
-#[fig, ax, cb, th]
+    return([fig, [ax0, ax1], cb, th])
+#
