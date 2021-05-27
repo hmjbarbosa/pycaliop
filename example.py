@@ -27,7 +27,7 @@ plt.ion()
 plt.interactive(True)
 
 # point to the file to be read
-filen = 'samples/CAL_LID_L2_VFM-ValStage1-V3-30.2013-05-06T17-20-01ZD_Subset.hdf'
+filen = 'samples4.20/CAL_LID_L2_VFM-Standard-V4-20.2013-05-06T17-20-01ZD_Subset.hdf'
 print('Reading from file: ' + filen)
 
 # read the VFM
@@ -53,8 +53,8 @@ print(f'Size of VFM block: {np.shape(vfmblock)}')
 # This is the latitude at the level 1 data (i.e. 333m)
 # If we don't have that, we have to interpolate
 if 'ssLatitude' in h4sd.datasets():
-    lat = np.float64(h4sd.select('ssLatitude').get())
-    lon = np.float64(h4sd.select('ssLongitude').get())
+    lat = np.float64(h4sd.select('ssLatitude').get())[:,0]
+    lon = np.float64(h4sd.select('ssLongitude').get())[:,0]
 else:
     # Not sure if this is correct. Need to check "where" the Latitute of a L2
     # product is placed relative to the L1 positions.
@@ -84,29 +84,19 @@ alt = alt[ (alt > -0.5) & (alt < 30) ]
 vfmtypes = ['type', 'typeqa', 'phase', 'phaseqa', 'aerosol', 'cloud',
             'psc', 'subtype', 'subtypeqa', 'averaging']
 
-for tag in vfmtypes:
+for tag in ('subtypeqa',):
+    print (tag)
     # extract the feature flag
     vfmflag = vfm_type.vfm_type(vfmblock, tag)
 
     # plot the flag
-    vfm_plot.vfm_plot(vfmflag, [lat, lon], alt)
+    out = vfm_plot.vfm_plot(vfmflag, [lat, lon], alt)
 
 #vs_meta.detach()
 #vs.end()
 #h4.close()
 #sds.endaccess()
 #h4sd.end()
-
-# other features
-#[vfmdata, vfmtype] = vfm_plot(data,[1 223],'typeqa')
-#[vfmdata, vfmtype] = vfm_plot(data,[1 223],'phase')
-#[vfmdata, vfmtype] = vfm_plot(data,[1 223],'phaseqa')
-#[vfmdata, vfmtype] = vfm_plot(data,[1 223],'aerosol')
-#[vfmdata, vfmtype] = vfm_plot(data,[1 223],'cloud')
-#[vfmdata, vfmtype] = vfm_plot(data,[1 223],'psc')
-#[vfmdata, vfmtype] = vfm_plot(data,[1 223],'subtype')
-#[vfmdata, vfmtype] = vfm_plot(data,[1 223],'subtypeqa')
-#[vfmdata, vfmtype] = vfm_plot(data,[1 223],'averaging')
 
 #function [alt] = Ind2Alt(ind)
 #sz = length(ind)
