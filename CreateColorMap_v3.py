@@ -1,46 +1,42 @@
 def CreateColorMap(ColorMap, NumColors = 0):
-    """
-    CREATECOLORMAP   Creates a colormap 
-       [red,grn,blu] = CREATECOLORMAP(ColorMap) takes a ColorMap name (string)
-       and returns float arrays of red, green and blue colors (0-1) that
-       compose the map. ColorMap can be one of the following:
-    
-          'Feature Type'
-          'Feature Type QA'
-          'Ice/Water Phase'
-          'Ice/Water Phase QA'
-          'Aerosol Sub-Type'
-          'Cloud Sub-Type'
-          'PSC Sub-Type'
-          'Sub-Type'
-          'Sub-Type QA'
-          'Averaging Required for Detection'
-    
-       These correspond to ClassText.FieldDescription returned by
-       vfm_type(), and have a fixed number of colors to match exactly the
-       colors used on the CALIPSO website to show these feature flags.
-    
-       [red,grn,blu] = CREATECOLORMAP(ColorMap, NumColors) works the same
-       way, but allows one to choose the number of colors. In this case,
-       only generic linear colormaps are available, which are named:
-      
-          'Rainbow' or 'default'
-          'BlackWhite'
-          'BlackGold'
-    
-       History:
-          2021-may-26 Translated from Matlab to Python
-    
-          2021-apr-09 Added names for all colormaps associated with standard
-                      feature flags. NumColors is now the 2nd parameter, and 
-                      only used for linear colormaps. Colors now match those
-                      used on the CALIPSO website.
-          
-          2005-mar-28 Original code by Ralph Kuehn shared on CALIPO's
-                      website, from 2005/03/28.
-    
-    """
-    
+    #CREATECOLORMAP   Creates a colormap 
+    #   [red,grn,blu] = CREATECOLORMAP(ColorMap) takes a ColorMap name (string)
+    #   and returns float arrays of red, green and blue colors (0-1) that
+    #   compose the map. ColorMap can be one of the following:
+    #
+    #      'Feature Type'
+    #      'Feature Type QA'
+    #      'Ice/Water Phase'
+    #      'Ice/Water Phase QA'
+    #      'Aerosol Sub-Type'
+    #      'Cloud Sub-Type'
+    #      'PSC Sub-Type'
+    #      'Sub-Type'
+    #      'Sub-Type QA'
+    #      'Averaging Required for Detection'
+    #
+    #   These correspond to ClassText.FieldDescription returned by
+    #   vfm_type(), and have a fixed number of colors to match exactly the
+    #   colors used on the CALIPSO website to show these feature flags.
+    #
+    #   [red,grn,blu] = CREATECOLORMAP(ColorMap, NumColors) works the same
+    #   way, but allows one to choose the number of colors. In this case,
+    #   only generic linear colormaps are available, which are named:
+    #  
+    #      'Rainbow' or 'default'
+    #      'BlackWhite'
+    #      'BlackGold'
+    #
+    #   History: 
+    #      2021-mar-09 Added names for all colormaps associated with standard
+    #                  feature flags. NumColors is now the 2nd parameter, and 
+    #                  only used for linear colormaps. Colors now match those
+    #                  used on the CALIPSO website.
+    #      
+    #      2005-mar-28 Original code by Ralph Kuehn shared on CALIPO's
+    #                  website, from 2005/03/28.
+    #
+
     import numpy as np
     import sys
     import matplotlib as mpl
@@ -74,42 +70,37 @@ def CreateColorMap(ColorMap, NumColors = 0):
         return(cmap)
 
     if (ColorMap == 'Aerosol Sub-Type'):
-        #3.30
-        #red = np.array([ 198, 255,   0, 250, 255,   0, 174, 0, 255])/255
-        #grn = np.array([ 198, 255,   0, 255,   0, 128,  87, 0,   0])/255 
-        #blu = np.array([ 198, 255, 255,   0,   0,   0,   0, 0, 255])/255
-        #4.20
-        red = np.array([ 198, 255,   0, 250, 255,   0, 153, 0,   0])/255
-        grn = np.array([ 198,   0,   0, 255, 179, 166,  76, 0, 142])/255 
-        blu = np.array([ 198, 255, 255,   0,   0,   0,   0, 0, 194])/255 
+        red = np.array([ 198,   0, 250, 255,   0, 174, 0, 255])/255
+        grn = np.array([ 198,   0, 255,   0, 128,  87, 0,   0])/255 
+        blu = np.array([ 198, 255,   0,   0,   0,   0, 0, 255])/255 
         cmap = mpl.colors.ListedColormap(np.array([red, grn, blu]).transpose())
         return(cmap)
                                          
     if (ColorMap == 'Cloud Sub-Type'):
-        red = np.array([  0, 255,   0, 174, 255, 250,   0, 192,   0])/255
-        grn = np.array([ 38,   0, 220,  87, 160, 255, 255, 192,   0])/255 
-        blu = np.array([255,   0, 255,   0,   0,   0, 110, 192,   0])/255 
+        red = np.array([  0,   0,   0, 144, 255, 255, 192, 255, 255])/255
+        grn = np.array([  0,   0, 255, 255, 255, 159, 192, 255,   0])/255 
+        blu = np.array([  0, 144, 255, 111,   0,   0, 192, 255, 255])/255 
         cmap = mpl.colors.ListedColormap(np.array([red, grn, blu]).transpose())
         return(cmap)
 
     if (ColorMap == 'PSC Sub-Type'):
-        red = np.array([ 198, 255, 255, 138,  81,  0])/255
-        grn = np.array([ 198,   0, 255, 138,  81,  0])/255 
-        blu = np.array([ 198, 255, 255, 138,  81,  0])/255 
+        red = np.array([255,   0,   0, 144, 255, 255, 192, 255, 255])/255
+        grn = np.array([  0,   0, 255, 255, 255, 159, 192, 255,   0])/255 
+        blu = np.array([  0, 144, 255, 111,   0,   0, 192, 255, 255])/255 
         cmap = mpl.colors.ListedColormap(np.array([red, grn, blu]).transpose())
         return(cmap)
 
     if (ColorMap == 'Sub-Type'):
-        red = np.array([ 198, 255,   0, 250, 255,   0, 153, 0,   0])/255
-        grn = np.array([ 198,   0,   0, 255, 179, 166,  76, 0, 142])/255 
-        blu = np.array([ 198, 255, 255,   0,   0,   0,   0, 0, 194])/255 
+        red = np.array([255,   0,   0, 144, 255, 255, 192, 255, 255])/255
+        grn = np.array([  0,   0, 255, 255, 255, 159, 192, 255,   0])/255 
+        blu = np.array([  0, 144, 255, 111,   0,   0, 192, 255, 255])/255 
         cmap = mpl.colors.ListedColormap(np.array([red, grn, blu]).transpose())
         return(cmap)
                                          
     if (ColorMap == 'Sub-Type QA'):
-        red = np.array([ 198, 255,   0])/255
-        grn = np.array([ 198,   0, 166])/255
-        blu = np.array([ 198,   0,   0])/255 
+        red = np.array([ 0, 180, 255])/255
+        grn = np.array([ 0, 180, 255])/255
+        blu = np.array([ 0, 180, 255])/255 
         cmap = mpl.colors.ListedColormap(np.array([red, grn, blu]).transpose())
         return(cmap)
 

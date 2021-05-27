@@ -61,8 +61,8 @@ def vfm_type(vfm_row, feature):
         vfm_class = {'Data':vfm_flag,
                      'FieldDescription':'Feature Type',
                      'Vmin':0, 'Vmax':7,
-                     'ByteTxt':['N/A','clear air','cloud','trop. aerosol','strat. aerosol',
-                                'surface','subsurface','no signal']}
+                     'ByteTxt':['Invalid','Clear Air','Cloud','Aerosol','Strat Feature',
+                                'Surface','Subsurface','No Signal']}
         
     elif feature.lower() == 'typeqa':
         # bits 4-5 Feature Type QA 
@@ -82,20 +82,16 @@ def vfm_type(vfm_row, feature):
         
     elif feature.lower() == 'phase':
         # 6-7 Ice/Water Phase
-        # -1 = region of the VFM not classified as cloud
         # 0 = unknown / not determined
         # 1 = randomly oriented ice
         # 2 = water
         # 3 = horizontally oriented ice        
         a = np.right_shift(vfm_row,5)
-        vfm_flag = np.int16(np.bitwise_and(umask2,a))
-        # mark regions where there are no clouds
-        vfm_feature = np.bitwise_and(umask3,vfm_row)
-        vfm_flag[vfm_feature != 2] = -1
+        vfm_flag = np.bitwise_and(umask2,a)
         vfm_class = {'Data':vfm_flag,
                      'FieldDescription':'Ice/Water Phase',
-                     'Vmin':-1, 'Vmax':3,
-                     'ByteTxt':['N/A', 'unknown','ice','water','oriented ice']}
+                     'Vmin':0, 'Vmax':3,
+                     'ByteTxt':['Unknown/Not Determined','Ice','Water','HO']}
     
     elif feature.lower() == 'phaseqa':
         # 8-9 Ice/Water Phase QA 
@@ -122,16 +118,16 @@ def vfm_type(vfm_row, feature):
         # 6 = smoke
         # 7 = other
         a = np.right_shift(vfm_row,9)
-        vfm_flag = np.int16(np.bitwise_and(umask3,a))
-        print(np.unique(vfm_flag))
-        # mark regions where there are no aerosols
-        vfm_feature = np.bitwise_and(umask3,vfm_row)
-        vfm_flag[vfm_feature != 3] = -1
+        temp = np.bitwise_and(umask3,a)
+        vfm_flag2 = np.bitwise_and(umask3,vfm_row)
+        tmask = (vfm_flag2 == 3)
+        temp2 = (temp & tmask)
+        vfm_flag = temp * np.uint16(temp2)
         vfm_class = {'Data':vfm_flag,
                      'FieldDescription':'Aerosol Sub-Type',
-                     'Vmin':-1, 'Vmax':7,
-                     'ByteTxt':['N/A','unknown','clean marine','dust','poll. cont.','clean cont.',
-                                'poll. dust','smoke','dusty marine']}
+                     'Vmin':0, 'Vmax':7,
+                     'ByteTxt':['Not Determined','Clean Marine','Dust','Polluted Cont.','Clean Cont.',
+                                'Polluted Dust','Smoke','Other']}
     
     elif feature.lower() == 'cloud':
         # 10-12 Feature Sub-type
@@ -145,15 +141,16 @@ def vfm_type(vfm_row, feature):
         # 6 = cirrus (transparent)
         # 7 = deep convective (opaque)
         a = np.right_shift(vfm_row,9)
-        vfm_flag = np.int16(np.bitwise_and(umask3,a))
-        # mark regions where there are no aerosols
-        vfm_feature = np.bitwise_and(umask3,vfm_row)
-        vfm_flag[vfm_feature != 2] = -1
+        temp = np.bitwise_and(umask3,a)
+        vfm_flag2 = np.bitwise_and(umask3,vfm_row)
+        tmask = (vfm_flag2 == 2)
+        temp2 = (temp & tmask)
+        vfm_flag = temp * np.uint16(temp2) +  np.uint16(tmask)
         vfm_class = {'Data':vfm_flag,
                      'FieldDescription':'Cloud Sub-Type',
-                     'Vmin':-1, 'Vmax':7,
-                     'ByteTxt':['N/A','Low, over, thin','Low, over, thick','Trans. Sc','Low Broken',
-                                'Ac','As','Ci','Cb']}
+                     'Vmin':0, 'Vmax':7,
+                     'ByteTxt':['NA','Low, overcast, thin','Low, overcast, thick','Trans. StratoCu','Low Broken',
+                                'Altocumulus','Altostratus','Cirrus (transparent)','Deep Convection']}
     
     elif feature.lower() == 'psc':
         # 10-12 Feature Sub-type
@@ -167,29 +164,25 @@ def vfm_type(vfm_row, feature):
         # 6 = spare
         # 7 = other
         a = np.right_shift(vfm_row,9)
-        vfm_flag = np.int16(np.bitwise_and(umask3,a))
-        # mark regions where there are no aerosols
-        vfm_feature = np.bitwise_and(umask3,vfm_row)
-        vfm_flag[vfm_feature != 4] = -1
+        temp = np.bitwise_and(umask3,a)
+        vfm_flag2 = np.bitwise_and(umask3,vfm_row)
+        tmask = (vfm_flag2 == 4)
+        temp2 = (temp & tmask)
+        vfm_flag = temp * np.uint16(temp2)
         vfm_class = {'Data':vfm_flag,
                      'FieldDescription':'PSC Sub-Type',
-                     'Vmin':-1, 'Vmax':4,
-                     'ByteTxt':['N/A','invalid','PSC aerosol','volcanic ash',
-                                'sulfate/other','elevated smoke']}
-        #             'ByteTxt':['Not Determined','Non-Depol. PSC','Depol. PSC',
-        #                        'Non-Depol Aerosol','Depol. Aerosol','spare','spare','Other']}
+                     'Vmin':0, 'Vmax':7,
+                     'ByteTxt':['Not Determined','Non-Depol. PSC','Depol. PSC',
+                                'Non-Depol Aerosol','Depol. Aerosol','spare','spare','Other']}
         
     elif feature.lower() == 'subtype':
         # Returns just subtype number
         a = np.right_shift(vfm_row,9)
-        vfm_flag = np.int16(np.bitwise_and(umask3,a))
-        # mark regions where there are no aerosols
-        vfm_feature = np.bitwise_and(umask3,vfm_row)
-        vfm_flag[(vfm_feature < 2) | (vfm_feature > 4) ] = -1
+        vfm_flag = np.bitwise_and(umask3,a)
         vfm_class = {'Data':vfm_flag,
                      'FieldDescription':'Sub-Type',
-                     'Vmin':-1, 'Vmax':7,
-                     'ByteTxt':['N/A', 'Zero','One','Two','Three','Four','Five',
+                     'Vmin':0, 'Vmax':7,
+                     'ByteTxt':['Zero','One','Two','Three','Four','Five',
                                 'Six','Seven']}
         
     elif feature.lower() == 'subtypeqa':
@@ -197,14 +190,11 @@ def vfm_type(vfm_row, feature):
         # 0 = not confident
         # 1 = confident
         a = np.right_shift(vfm_row,12)
-        vfm_flag = np.int16(np.bitwise_and(umask1,a))
-        # mark regions where there are no aerosols
-        vfm_feature = np.bitwise_and(umask3,vfm_row)
-        vfm_flag[(vfm_feature < 2) | (vfm_feature > 4) ] = -1
+        vfm_flag = np.bitwise_and(umask1,a)
         vfm_class = {'Data':vfm_flag,
                      'FieldDescription':'Sub-Type QA',
-                     'Vmin':-1, 'Vmax':1,
-                     'ByteTxt':['N/A','Not Confident','Confident']}
+                     'Vmin':0, 'Vmax':1,
+                     'ByteTxt':['Not Confident','Confident']}
         
     elif feature.lower() == 'averaging':
         # 14-16 Horizontal averaging required for detection
@@ -220,7 +210,7 @@ def vfm_type(vfm_row, feature):
         vfm_class = {'Data':vfm_flag,
                      'FieldDescription':'Averaging Required for Detection',
                      'Vmin':0, 'Vmax':5,
-                     'ByteTxt':['N/A','1/3 km','1 km','5 km','20 km','80 km']}
+                     'ByteTxt':['NA','1/3 km','1 km','5 km','20 km','80 km']}
         
     else:
         sys.exit('Unknown type specifier. Check input')
