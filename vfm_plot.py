@@ -89,6 +89,8 @@ def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
     # colorbar 
     cb = plt.colorbar()
     cb.ax.tick_params(length=0)
+    ticks = np.arange(vfm['Vmin'], vfm['Vmax']+1)
+    cb.ax.yaxis.set_ticks(ticks)
 
     # fixes axes positions after ploting the colorbar
     ax0.set_position(pos=axpos)
@@ -97,7 +99,7 @@ def vfm_plot(vfm, xs, y, imgSize = [1300, 667], dpi=96):
     # Create bottom caption for flag's values
     typelabel = '';
     for i, txt in enumerate(vfm['ByteTxt']):
-        typelabel += '%d - %s    '%(vfm['Vmin']+i, txt)
+        typelabel += '%d = %s    '%(vfm['Vmin']+i, txt)
     
     #th = annotation('textbox',[0.062 0.0 0.837 0.04],'string',typelabel);
     fig.text(0.5, 0.015, typelabel, fontsize=12, fontweight='bold', fontfamily='verdana',
